@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: fractal
+Version: 0.0.1
+Summary: 对分形比较感兴趣，看pypi上没有相关库，自己撸着玩
+Home-page: https://github.com/ChenL1994/fractal
+Author: 陈粮
+Author-email: 1570184051@qq.com
+License: MIT
+Description: UNKNOWN
+Keywords: fractal,分形
+Platform: any
