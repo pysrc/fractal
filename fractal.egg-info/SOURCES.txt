@@ -1,4 +1,5 @@
 setup.py
+fractal/IFS.py
 fractal/LSystem.py
 fractal/__init__.py
 fractal.egg-info/PKG-INFO

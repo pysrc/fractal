@@ -1,5 +1,13 @@
 """
     L-System for fractal
+    已完成功能：
+        1.简单D0L-系统
+        2.合成D0L-系统
+        3.简单分叉结构
+    待完成功能：
+        1.带年龄树（分叉）的生成
+        2.随机L-系统
+        3.参数L-系统
 """
 
 from math import sin, cos, pi
@@ -87,14 +95,14 @@ class Pen:
                 self.forward(length)
             i += 1
 
-    def doD0L(self, omega, P, delta, times, length, rate, delta0=0):
+    def doD0L(self, omega, P, delta, times, length, rate):
         # omega: 公理（初始字符串）
         # P: 产生式（映射规则）
-        # delta0: 初始偏移量
         # delta: 角度增量
         # times: 迭代次数
         # length: 初始线长
         # rate: 每次迭代后缩小的倍数
+        length /= (rate**times)
         for i in range(times):  # 完成字符串迭代
             ct = 0
             for key in P:
@@ -104,7 +112,6 @@ class Pen:
             for key in P:
                 omega = omega.replace(str(ct), P[key])
                 ct += 1
-        length /= (rate**times)
         self.draw(omega, P, delta, length)
 
     def save(self, title):

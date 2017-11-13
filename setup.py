@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="fractal",
-    version="0.0.3",
+    version="0.0.4",
     keywords=["fractal", "分形"],
     description="对分形比较感兴趣，看pypi上没有相关库，自己撸着玩",
     license="MIT",
