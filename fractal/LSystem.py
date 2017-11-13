@@ -1,5 +1,5 @@
 """
-L-系统生成法
+    L-System for fractal
 """
 
 from math import sin, cos, pi
@@ -25,7 +25,7 @@ class Pen:
         self.screen.fill([255, 255, 255])
         self.setPoint([size[0] / 2, size[1] / 2])
         self.setColor([0, 0, 0])
-        self.setWidth(2)
+        self.setWidth(1)
         self.setAngle(0)
         pygame.display.flip()
 
@@ -59,6 +59,34 @@ class Pen:
         pygame.display.flip()
         self.pos = np
 
+    def draw(self, omega, P, delta, length):
+        i = 0
+        while i < len(omega):
+            if omega[i] == '+':
+                self.left(delta)
+            elif omega[i] == '-':
+                self.right(delta)
+            elif omega[i] == '[':
+                k = 0
+                st = i
+                while i < len(omega):
+                    if omega[i] == "[":
+                        k += 1
+                    elif omega[i] == "]":
+                        k -= 1
+                    if k == 0:
+                        break
+                    i += 1
+                sub = omega[st + 1:i]
+                curpoint = self.pos[:]
+                curangle = self.angle
+                self.draw(sub, P, delta, length)
+                self.pos = curpoint
+                self.angle = curangle
+            else:
+                self.forward(length)
+            i += 1
+
     def doD0L(self, omega, P, delta, times, length, rate, delta0=0):
         # omega: 公理（初始字符串）
         # P: 产生式（映射规则）
@@ -67,24 +95,7 @@ class Pen:
         # times: 迭代次数
         # length: 初始线长
         # rate: 每次迭代后缩小的倍数
-
-        length /= (rate**times)
-        for i in range(times):
-            for key in P:
-                omega = omega.replace(key, P[key])
-        self.left(delta0)
-        for j in omega:
-            if j == '+':
-                self.left(delta)
-            elif j == '-':
-                self.right(delta)
-            else:
-                self.forward(length)
-
-    def edgeRewrite(self, omega, P, delta, times, length, rate, delta0=0):
-        # 边改写
-        length /= (rate**times)
-        for i in range(times):
+        for i in range(times):  # 完成字符串迭代
             ct = 0
             for key in P:
                 omega = omega.replace(key, str(ct))
@@ -93,14 +104,8 @@ class Pen:
             for key in P:
                 omega = omega.replace(str(ct), P[key])
                 ct += 1
-        self.left(delta0)
-        for j in omega:
-            if j == '+':
-                self.left(delta)
-            elif j == '-':
-                self.right(delta)
-            else:
-                self.forward(length)
+        length /= (rate**times)
+        self.draw(omega, P, delta, length)
 
     def save(self, title):
         # 保存图片，title为文件名
