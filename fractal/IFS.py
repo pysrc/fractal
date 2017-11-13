@@ -21,7 +21,11 @@ class IFS:
 
     def ifsp(self, x, y):
         # 变换规则(返回迭代后的坐标)
+        # 此函数具体用时需要重写
         return (x, y)
+
+    def setIfsp(self, call):
+        self.ifsp = call
 
     def setPx(self, enlarge, pl, pt):
         # 平移、放大调整

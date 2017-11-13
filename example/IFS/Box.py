@@ -18,6 +18,6 @@ def ifsp(x, y):
 
 ob = IFS([500, 500], title="Box")
 ob.setPx(490, 5, 5)
-ob.ifsp = ifsp
+ob.setIfsp(ifsp)
 ob.doIFS(200000)
 ob.wait()

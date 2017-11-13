@@ -14,6 +14,6 @@ def ifsp(x, y):
 
 ob = IFS([460, 450], title="Sier")
 ob.setPx(400, 0, 10)
-ob.ifsp = ifsp
+ob.setIfsp(ifsp)
 ob.doIFS(200000)
 ob.wait()

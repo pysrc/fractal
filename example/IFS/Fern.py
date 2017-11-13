@@ -18,6 +18,6 @@ def ifsp(x, y):
 
 ob = IFS([400, 500], title = "蕨")
 ob.setPx(100, 100, 100)
-ob.ifsp = ifsp
+ob.setIfsp(ifsp)
 ob.doIFS(200000)
 ob.wait()
