@@ -23,7 +23,6 @@ p.setWidth(1)
 p.doD0L(omega="L", P={"L": "L+R", "R": "L-R"},
               delta=90, times=15, length=200, rate=sqrt(2))
 p.wait()
-
 ```
 
 ![](fenxing_images/dragon.jpg)
@@ -144,7 +143,7 @@ ob.wait()
 ![](fenxing_images/ibox.jpg)
 
 ```python
-from fractal.IFS import IFS
+from fractal import IFS
 
 ifscode = [
     [0.879, 0.054, -0.051, 0.878, 0.077, 0.123, 0.123],
@@ -164,7 +163,7 @@ ifs.wait()
 ![](fenxing_images/leaf.jpg)
 
 ```python
-from fractal.IFS import IFS
+from fractal import IFS
 
 code = [
     [0.195, -0.488, 0.344, 0.443, 0.4431, 0.2452, 0.2],
