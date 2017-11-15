@@ -1,7 +1,9 @@
 setup.py
-fractal/IFS.py
-fractal/LSystem.py
 fractal/__init__.py
+fractal/ifs.py
+fractal/julia.py
+fractal/lsystem.py
+fractal/mandelbrot.py
 fractal.egg-info/PKG-INFO
 fractal.egg-info/SOURCES.txt
 fractal.egg-info/dependency_links.txt

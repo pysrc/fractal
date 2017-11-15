@@ -143,3 +143,75 @@ ob.wait()
 
 ![](fenxing_images/ibox.jpg)
 
+```python
+from fractal.IFS import IFS
+
+ifscode = [
+    [0.879, 0.054, -0.051, 0.878, 0.077, 0.123, 0.123],
+    [0.1, -0.193, 0.285, 0.224, 0.174, 0.169, 0.169],
+    [0.008, 0.135, 0, 0.204, 0.075, 0.074, 0.074],
+    [0.402, 0.045, 0.016, -0.197, 0.111, 0.193, 0.193]
+]
+
+ifs = IFS([500, 500])
+# ifs.setCoordinate()
+ifs.setPx(700, 0, 0)
+ifs.setIfsCode(ifscode)
+ifs.doIFS(200000)
+ifs.wait()
+```
+
+![](fenxing_images/leaf.jpg)
+
+```python
+from fractal.IFS import IFS
+
+code = [
+    [0.195, -0.488, 0.344, 0.443, 0.4431, 0.2452, 0.2],
+    [0.462, 0.414, -0.252, 0.361, 0.2511, 0.5692, 0.2],
+    [-0.637, 0, 0, 0.501, 0.8562, 0.2512, 0.2],
+    [-0.035, 0.07, -0.469, 0.022, 0.4884, 0.5069, 0.2],
+    [-0.058, -0.07, -0.453, -0.111, 0.5976, 0.0969, 0.2]
+]
+
+ifs = IFS([500,500])
+ifs.setCoordinate()
+ifs.setPx(500, 0, 0)
+ifs.setIfsCode(code)
+ifs.doIFS(200000)
+ifs.wait()
+```
+
+![](fenxing_images/itree.jpg)
+
+
+
+### Julia
+
+```python
+from fractal import Julia
+ju = Julia([500, 500])
+ju.setC(0 - 1j)
+ju.doJulia(500)
+ju.wait()
+```
+
+![](fenxing_images/ju2.jpg)
+
+**-1.25 + 0j**
+
+![](fenxing_images/ju6.jpg)
+
+### Mandelbrot
+
+
+
+```python
+from fractal import Mandelbrot
+man = Mandelbrot([500, 500])
+man.doMandelbrot(500)
+man.wait()
+```
+
+![](fenxing_images/mandelbrot.jpg)
+
