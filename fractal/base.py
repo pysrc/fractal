@@ -19,10 +19,12 @@ class Base(object):
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption(title)
         self.screen.fill([255, 255, 255])
+        self.psave = False
 
     def save(self, title):
         # 保存图片，title为文件名
-        pygame.image.save(self.screen, title)
+        self.psave = True
+        self.ftitle = title
 
     def wait(self):
         # 等待用户关闭
@@ -32,4 +34,7 @@ class Base(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
+            if not th.is_alive():
+                if self.psave:
+                    pygame.image.save(self.screen, self.ftitle)
             pygame.display.flip()
