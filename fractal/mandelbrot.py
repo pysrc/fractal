@@ -34,7 +34,9 @@ class Mandelbrot:
 
     def color(self, i):
         # 对第i次迭代点着色，返回RGB值
-        return colors[i % 147]
+        if i < 10:
+            return [255, 255, 255]
+        return colors[i % len(colors)]
 
     def setColor(self, call):
         self.color = call
