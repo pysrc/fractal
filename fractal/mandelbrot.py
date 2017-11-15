@@ -1,14 +1,12 @@
 import pygame
 from fractal.julia import colors
+from .base import Base
 
 
-class Mandelbrot:
+class Mandelbrot(Base):
 
     def __init__(self, size, title=""):
-        pygame.init()
-        self.screen = pygame.display.set_mode(size)
-        pygame.display.set_caption(title)
-        self.screen.fill([255, 255, 255])  # 白色填充
+        Base.__init__(self, size, self.__run, title)
         self.setExp(2)
         self.setRadius(2)
         self.selectArea([0, 0], size[0], size[1])
@@ -41,9 +39,9 @@ class Mandelbrot:
     def setColor(self, call):
         self.color = call
 
-    def doMandelbrot(self, N):
-        # 开始迭代
-        # N: 最大迭代次数
+    def __run(self):
+        # 绘图
+        N = self.N
         for i in range(self.width):
             for j in range(self.height):
                 ct = 0  # 当前迭代次数
@@ -57,14 +55,8 @@ class Mandelbrot:
                     z = z**2 + c
                 self.screen.set_at(
                     [self.start[0] + i, self.start[1] + j], self.color(ct))
-        pygame.display.flip()
 
-    def save(self, title):
-        # 保存图片，title为文件名
-        pygame.image.save(self.screen, title)
-
-    def wait(self):
-        while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
+    def doMandelbrot(self, N):
+        # 开始迭代
+        # N: 最大迭代次数
+        self.N = N

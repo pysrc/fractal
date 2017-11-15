@@ -12,6 +12,7 @@
 
 from math import sin, cos, pi
 import pygame
+from .base import Base
 
 
 def left(screen, st, angle, d):
@@ -22,20 +23,16 @@ def left(screen, st, angle, d):
     return [st[0] + d * cos(angle), st[1] - d * sin(angle)]
 
 
-class Pen:
+class Pen(Base):
 
     def __init__(self, size, title=""):
         # size 画布的宽高 [width, hight]
         # title 画布标题
-        pygame.init()
-        self.screen = pygame.display.set_mode(size)
-        pygame.display.set_caption(title)
-        self.screen.fill([255, 255, 255])
+        Base.__init__(self, size, self.__run, title)
         self.setPoint([size[0] / 2, size[1] / 2])
         self.setColor([0, 0, 0])
         self.setWidth(1)
         self.setAngle(0)
-        pygame.display.flip()
 
     def setAngle(self, angle):
         self.angle = angle
@@ -64,8 +61,11 @@ class Pen:
         # 向前走d步长
         np = left(self.screen, self.pos, self.angle, d)
         pygame.draw.line(self.screen, self.color, self.pos, np, self.width)
-        pygame.display.flip()
         self.pos = np
+
+    def __run(self):
+        # 线程
+        self.draw(self.omega, self.P, self.delta, self.length)
 
     def draw(self, omega, P, delta, length):
         i = 0
@@ -112,15 +112,7 @@ class Pen:
             for key in P:
                 omega = omega.replace(str(ct), P[key])
                 ct += 1
-        self.draw(omega, P, delta, length)
-
-    def save(self, title):
-        # 保存图片，title为文件名
-        pygame.image.save(self.screen, title)
-
-    def wait(self):
-        # 绘制结束等用户关闭程序
-        while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
+        self.omega = omega
+        self.P = P
+        self.delta = delta
+        self.length = length

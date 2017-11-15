@@ -4,6 +4,7 @@
 import pygame
 from random import random
 from math import sin, cos
+from .base import Base
 
 
 def getIfsCode(matrix):
@@ -15,12 +16,11 @@ def getIfsCode(matrix):
         res.append(item)
     return res
 
-class IFS:
+
+class IFS(Base):
 
     def __init__(self, size, title="", color=None):
-        pygame.init()
-        self.screen = pygame.display.set_mode(size)
-        pygame.display.set_caption(title)
+        Base.__init__(self, size, self.__run, title)
         self.setPx()
         self.setIfsCode()
         self.__coo = True
@@ -72,34 +72,31 @@ class IFS:
         self.pl = pl
         self.pt = pt
 
+    def __run(self):
+        start = self.start
+        for i in range(self.n):
+            if self.__coo:
+                self.screen.set_at(
+                    (int(self.enlarge * start[0] + self.pl), int(self.enlarge * start[1] + self.pt)), self.pcolor)
+            else:
+                self.screen.set_at((int(self.enlarge * start[0] + self.pl), self.screen.get_height(
+                ) - int(self.enlarge * start[1] + self.pt)), self.pcolor)
+            start = self.ifsp(*start)
+
     def doIFS(self, n, start=None, color=None):
         """
             开始迭代
             start: 迭代起点
             color: 描点的颜色
         """
+        self.n = n
         if start == None:
-            start = (0, 0)
+            self.start = (0, 0)
+        else:
+            self.start = start
         if color == None:
-            color = [0, 0, 0]
+            self.pcolor = [0, 0, 0]
+        else:
+            self.pcolor = color
         if self.ifsCode != None:
             self.ifsp = self.__parseIfsCode
-        for i in range(n):
-            if self.__coo:
-                self.screen.set_at(
-                    (int(self.enlarge * start[0] + self.pl), int(self.enlarge * start[1] + self.pt)), color)
-            else:
-                self.screen.set_at((int(self.enlarge * start[0] + self.pl), self.screen.get_height(
-                ) - int(self.enlarge * start[1] + self.pt)), color)
-            start = self.ifsp(*start)
-        pygame.display.flip()
-
-    def save(self, title):
-        # 保存图片，title为文件名
-        pygame.image.save(self.screen, title)
-
-    def wait(self):
-        while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
