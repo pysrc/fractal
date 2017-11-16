@@ -1,5 +1,5 @@
 import pygame
-from fractal.julia import colors
+from .colors import *
 from .base import Base
 
 
@@ -9,8 +9,11 @@ class Mandelbrot(Base):
         Base.__init__(self, size, self.__run, title)
         self.setExp(2)
         self.setRadius(2)
-        self.selectArea([0, 0], size[0], size[1])
         self.setZ0(0 + 0j)
+        self.width = size[0]
+        self.height = size[1]
+        self.setRange(3.5, 3.5)
+        self.setCentre(0 + 0j)
 
     def setRadius(self, R):
         # 设置逃逸半径
@@ -20,21 +23,36 @@ class Mandelbrot(Base):
         # 设置起始迭代复数（一般为0+0j）
         self.Z0 = Z0
 
-    def selectArea(self, start, width, height):
-        # 产生 Mandelbrot 集的区域
-        self.start = start
-        self.width = int(width)
-        self.height = int(height)
+    def setCentre(self, z0):
+        # 设置中心点
+        self.z0 = z0
+
+    def setRange(self, xmax, ymax):
+        # 设置坐标范围，范围越小图放大倍数越高
+        self.xmax = xmax
+        self.ymax = ymax
+
+    def __getXY(self, i, j):
+        # 通过像素坐标获取映射后的坐标
+        return complex((i / self.width - 0.5) * self.xmax + self.z0.real, (j / self.height - 0.5) * self.ymax + self.z0.imag)
+
+    def scala(self, i, j, rate):
+        # 将(i, j)像素点置于中心位置，放大rete倍
+        self.setCentre(self.__getXY(i, j))
+        self.xmax /= rate
+        self.ymax /= rate
 
     def setExp(self, expc):
         # 设置指数，默认2
         self.expc = expc
 
-    def color(self, i):
+    def color(self, i, r=2):
         # 对第i次迭代点着色，返回RGB值
-        if i < 10:
-            return [255, 255, 255]
-        return colors[i % len(colors)]
+        if i < 20:
+            return blues[2 * i]
+        elif i < len(purples) - 1:
+            return purples[i]
+        return (0, 0, 0)
 
     def setColor(self, call):
         self.color = call
@@ -46,15 +64,13 @@ class Mandelbrot(Base):
             for j in range(self.height):
                 ct = 0  # 当前迭代次数
                 z = self.Z0
-                c = complex(4 * i / self.width - 2,
-                            4 * j / self.height - 2)
+                c = self.__getXY(i, j)
                 for k in range(N):
                     ct = k
                     if abs(z) > self.R:  # 大于逃逸半径，则返回
                         break
-                    z = z**2 + c
-                self.screen.set_at(
-                    [self.start[0] + i, self.start[1] + j], self.color(ct))
+                    z = z**self.expc + c
+                self.screen.set_at([i, j], self.color(ct))
 
     def doMandelbrot(self, N):
         # 开始迭代

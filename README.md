@@ -201,6 +201,8 @@ ju.wait()
 
 ![](fenxing_images/ju6.jpg)
 
+![](fenxing_images/ju62.jpg)
+
 ### Mandelbrot
 
 
@@ -208,9 +210,18 @@ ju.wait()
 ```python
 from fractal import Mandelbrot
 man = Mandelbrot([500, 500])
-man.doMandelbrot(500)
+man.setRange(5, 5)
+man.doMandelbrot(200)
 man.wait()
 ```
 
 ![](fenxing_images/mandelbrot.jpg)
+
+![](fenxing_images/mandelbrot2.jpg)
+
+![](fenxing_images/mandelbrot3.jpg)
+
+![](fenxing_images/mandelbrot4.jpg)
+
+
 
