@@ -33,10 +33,8 @@ class Julia(Base):
 
     def color(self, i, r=2):
         # 对第i次迭代点着色，返回RGB值
-        if i < 20:
-            return blues[2 * i]
-        elif i < len(purples) - 1:
-            return purples[i]
+        if i < len(reds) - 1:
+            return reds[i]
         return (0, 0, 0)
 
     def setColor(self, call):

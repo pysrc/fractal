@@ -203,6 +203,16 @@ ju.wait()
 
 ![](fenxing_images/ju62.jpg)
 
+
+
+**-0.605-0.45j**
+
+![](fenxing_images/(-0.605-0.45j)1.jpg)
+
+![](fenxing_images/(-0.605-0.45j)2.jpg)
+
+![](fenxing_images/(-0.605-0.45j)3.jpg)
+
 ### Mandelbrot
 
 

@@ -8,7 +8,6 @@
 import pygame
 from pygame.locals import K_p, K_LCTRL, K_RCTRL  # 按下Ctrl + P键打印
 import threading
-import time
 
 
 class Base(object):
@@ -28,6 +27,7 @@ class Base(object):
         self.psave = False
         self.scalaRate = 4  # 放大（缩小）倍数
         self.ctrl = False  # Ctrl键按下
+        self.cnt = 1  # 连续命名时标号
 
     def save(self, title):
         # 保存图片，title为文件名
@@ -46,8 +46,9 @@ class Base(object):
                         if event.key == K_p and self.ctrl:
                             if self.title == "":
                                 self.title = "game"
-                            self.save(self.title + ".jpg")
+                            self.save(self.title + str(self.cnt) + ".jpg")
                             self.ctrl = False
+                            self.cnt += 1
                         if event.key == K_LCTRL or event.key == K_RCTRL:
                             self.ctrl = True
                     if event.type == pygame.MOUSEBUTTONDOWN:
