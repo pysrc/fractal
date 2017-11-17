@@ -5,6 +5,7 @@ Julia集
 import pygame
 from .base import Base
 from .colors import *
+from threading import Thread
 
 
 class Julia(Base):
@@ -59,28 +60,41 @@ class Julia(Base):
         self.xmax /= rate
         self.ymax /= rate
 
-    def __run(self):
-        # 线程中
-        N = self.N
-        if self.C == None:
-            raise Exception("请设置迭代常数")
-            return
-        # res = {}
-        for i in range(self.width):
-            for j in range(self.height):
-                ct = 0  # 当前迭代次数
-                z = self.__getXY(i, j)
-                for k in range(N):
+    def __calc(self, start, w, h):
+        # 绘制以start为起点，宽w,高h的子区域
+        # x,y,w,h,N,c
+        for i in range(w):
+            for j in range(h):
+                ct = 0
+                z = self.__getXY(start[0] + i, start[1] + j)
+                for k in range(self.N):
                     ct = k
                     if abs(z) > self.R:  # 大于逃逸半径，则返回
                         break
-                    # if ct not in res:
-                    #     res[ct] = 1
-                    # else:
-                    #     res[ct] += 1
                     z = z**self.expc + self.C
-                self.screen.set_at([i, j], self.color(ct, abs(z)))
-        # print(res)
+                self.screen.set_at(
+                    [start[0] + i, start[1] + j], self.color(ct))
+
+    def __run(self):
+        # 线程中
+        print("x range ：[-%f,%f]\ny range ：[-%f,%f]" % (
+            self.xmax, self.xmax, self.ymax, self.ymax))
+        if self.C == None:
+            raise Exception("请设置迭代常数")
+            return
+        tn = 5  # 25 个子线程绘图
+        ci = self.width // tn
+        cj = self.height // tn
+        ts = []
+        for i in range(tn):
+            for j in range(tn):
+                t = Thread(target=self.__calc, args=(
+                    [i * ci, j * cj], self.width // tn, self.height // tn))
+                t.start()
+                ts.append(t)
+        for t in ts:
+            t.join()
+        del ts
 
     def doJulia(self, N):
         # 进入迭代

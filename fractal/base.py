@@ -1,6 +1,6 @@
 """
     基类
-    打印图片：Ctrl+P
+    打印（保存图片）图片：Ctrl+P
     放大：点击放大部分鼠标左键
     缩小：点击缩小部分鼠标右键
 """
@@ -8,6 +8,7 @@
 import pygame
 from pygame.locals import K_p, K_LCTRL, K_RCTRL  # 按下Ctrl + P键打印
 import threading
+import time
 
 
 class Base(object):
@@ -54,6 +55,12 @@ class Base(object):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1 and hasattr(self, "scala"):  # 鼠标左键放大
                             i, j = event.pos
+                            w = self.screen.get_width() // (2 * self.scalaRate)
+                            h = self.screen.get_height() // (2 * self.scalaRate)
+                            pygame.draw.rect(self.screen, [0, 0, 0], [
+                                             i - w, j - h, 2 * w, 2 * h], 1)
+                            pygame.display.flip()
+                            time.sleep(1)
                             self.scala(i, j, self.scalaRate)
                             th = threading.Thread(target=self.__run)
                             th.start()
