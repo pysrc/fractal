@@ -51,6 +51,9 @@ class Mandelbrot(Base):
         # 对第i次迭代点着色，返回RGB值
         if i < len(reds) - 1:
             return reds[i]
+        elif r < self.R:
+            j = (len(blues) - 1) * r / self.R
+            return blues[-int(j)]
         return (0, 0, 0)
 
     def setColor(self, call):
@@ -69,7 +72,7 @@ class Mandelbrot(Base):
                         break
                     z = z**self.expc + c
                 self.screen.set_at(
-                    [start[0] + i, start[1] + j], self.color(ct))
+                    [start[0] + i, start[1] + j], self.color(ct, abs(z)))
 
     def __run(self):
         # 绘图

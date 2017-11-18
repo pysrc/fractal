@@ -10,7 +10,6 @@ from pygame.locals import K_p, K_LCTRL, K_RCTRL  # 按下Ctrl + P键打印
 import threading
 import time
 
-
 class Base(object):
 
     def __init__(self, size, callRun, title=""):

@@ -45,23 +45,23 @@ class IFS(Base):
     def setIfsCode(self, ifsCode=None):
         # 设置ifs码
         self.ifsCode = ifsCode
+        if ifsCode != None:
+            # 解析ifs码
+            p = [i[-1] for i in self.ifsCode]  # 每个方程的概率
+            self.__fn = len(p)  # 方程个数
+            sp = sum(p)
+            # 将概率映射到0-1区间
+            self.__pe = [sum(p[:i + 1])/sp for i in range(self.__fn)]
 
     def __parseIfsCode(self, x, y):
-        # 解析ifs码
-        p = [i[-1] for i in self.ifsCode]  # 每个方程的概率
-        fn = len(p)  # 方程个数
-        sp = sum(p)
-        pe = [sum(p[:i + 1]) for i in range(fn)]  # 将概率映射到0-1区间
         rand = random()
-        i = 1
-        while i < fn:
-            if rand < pe[i]:
-                break
+        i = 0
+        while i < self.__fn:
+            if rand <= self.__pe[i]:  # 选择概率pe[i]对应的方程
+                a, b, c, d, e, f, p = self.ifsCode[i]
+                return (a * x + b * y + e, c * x + d * y + f)
             i += 1
-        i -= 1
-        # 选择概率pe[i]对应的方程
-        a, b, c, d, e, f, p = self.ifsCode[i]
-        return (a * x + b * y + e, c * x + d * y + f)
+        return (0, 0)
 
     def setPx(self, enlarge=1, pl=0, pt=0):
         # 平移、放大调整

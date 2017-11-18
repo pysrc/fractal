@@ -6,6 +6,7 @@ import pygame
 from .base import Base
 from .colors import *
 from threading import Thread
+# from .clib import calc
 
 
 class Julia(Base):
@@ -32,10 +33,13 @@ class Julia(Base):
         # 设置指数，默认2
         self.expc = expc
 
-    def color(self, i, r=2):
+    def color(self, i, r = 2):
         # 对第i次迭代点着色，返回RGB值
         if i < len(reds) - 1:
             return reds[i]
+        elif r < self.R:
+            j = (len(blues) - 1) * r / self.R
+            return blues[-int(j)]
         return (0, 0, 0)
 
     def setColor(self, call):
@@ -65,6 +69,9 @@ class Julia(Base):
         # x,y,w,h,N,c
         for i in range(w):
             for j in range(h):
+                # ct, r= calc([start[0] + i, start[1] + j, self.z0.real, self.z0.imag, self.C.real,
+                # self.C.imag, self.width, self.height, self.xmax, self.ymax,
+                # self.N, self.expc, self.R])
                 ct = 0
                 z = self.__getXY(start[0] + i, start[1] + j)
                 for k in range(self.N):
@@ -73,7 +80,10 @@ class Julia(Base):
                         break
                     z = z**self.expc + self.C
                 self.screen.set_at(
-                    [start[0] + i, start[1] + j], self.color(ct))
+                    [start[0] + i, start[1] + j], self.color(ct, abs(z)))
+                # self.screen.set_at(
+                #     [start[0] + i, start[1] + j], self.color(ct, r))
+                # print(ct, end=" ")
 
     def __run(self):
         # 线程中
