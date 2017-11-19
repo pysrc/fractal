@@ -1,0 +1,5 @@
+EXPORTS
+    add @1
+    jCalc @2
+    mCalc @3
+    mul @4

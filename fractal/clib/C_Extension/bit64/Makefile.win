@@ -1,0 +1,30 @@
+# Project: calc64
+# Makefile created by Dev-C++ 5.10
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = calc64.o
+LINKOBJ  = calc64.o
+LIBS     = -L"E:/dev/Dev-Cpp/MinGW64/lib" -L"E:/dev/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"E:/dev/Dev-Cpp/MinGW64/include" -I"E:/dev/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/dev/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include"
+CXXINCS  = -I"E:/dev/Dev-Cpp/MinGW64/include" -I"E:/dev/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/dev/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include" -I"E:/dev/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include/c++"
+BIN      = calc64.dll
+CXXFLAGS = $(CXXINCS) -DBUILDING_DLL=1
+CFLAGS   = $(INCS) -DBUILDING_DLL=1
+RM       = rm.exe -f
+DEF      = libcalc64.def
+STATIC   = libcalc64.a
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN) $(DEF) $(STATIC)
+
+$(BIN): $(LINKOBJ)
+	$(CC) -shared $(LINKOBJ) -o $(BIN) $(LIBS) -Wl,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
+
+calc64.o: calc64.c
+	$(CC) -c calc64.c -o calc64.o $(CFLAGS)

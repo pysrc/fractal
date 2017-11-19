@@ -8,13 +8,11 @@ import ctypes
 __curdir = os.path.split(os.path.realpath(__file__))[0]
 __dll = None
 
-__dllPath = os.path.join(__curdir, "calc.dll")
-
 if sys.platform == "win32":  # Windows
-    try:
-        __dll = ctypes.CDLL(__dllPath)
-    except Exception as e:
-        __dll = ctypes.WinDLL(__dllPath)
+    if "32 bit" in sys.version:
+        __dll = ctypes.CDLL(os.path.join(__curdir, "calc.dll"))
+    else:  # 64位
+        __dll = ctypes.CDLL(os.path.join(__curdir, "calc64.dll"))
 
 __jCalc = __dll.jCalc
 __jCalc.argtypes = [ctypes.c_double * 13, ]

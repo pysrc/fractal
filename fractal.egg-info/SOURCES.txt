@@ -14,3 +14,4 @@ fractal.egg-info/requires.txt
 fractal.egg-info/top_level.txt
 fractal/clib/__init__.py
 fractal/clib/calc.dll
+fractal/clib/calc64.dll

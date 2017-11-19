@@ -93,6 +93,8 @@ class Mandelbrot(Base):
         print("x range ：[-%f,%f]\ny range ：[-%f,%f]" % (
             self.xmax, self.xmax, self.ymax, self.ymax))
         tn = 5  # 25 个子线程绘图
+        # if calc: # 如果可以调C库，则只需要一个线程
+        #     tn = 1
         ci = self.width // tn
         cj = self.height // tn
         ts = []

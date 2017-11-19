@@ -1,6 +1,6 @@
 [Project]
-FileName=calc.dev
-Name=calc
+FileName=calc64.dev
+Name=calc64
 Type=3
 Ver=2
 ObjFiles=
@@ -27,8 +27,8 @@ CommandLine=
 Folders=
 IncludeVersionInfo=0
 SupportXPThemes=0
-CompilerSet=5
-CompilerSettings=0000000100000000100000000
+CompilerSet=0
+CompilerSettings=0000000000000000000000000
 UnitCount=2
 
 [VersionInfo]
@@ -51,7 +51,7 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit2]
-FileName=calc.h
+FileName=calc64.h
 CompileCpp=0
 Folder=
 Compile=1
@@ -61,7 +61,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit1]
-FileName=calc.c
+FileName=calc64.c
 CompileCpp=0
 Folder=
 Compile=1
