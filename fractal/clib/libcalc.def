@@ -1,4 +1,5 @@
 EXPORTS
     add @1
-    juliaCalc @2
-    mul @3
+    jCalc @2
+    mCalc @3
+    mul @4

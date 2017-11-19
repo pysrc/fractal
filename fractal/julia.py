@@ -6,7 +6,15 @@ import pygame
 from .base import Base
 from .colors import *
 from threading import Thread
-# from .clib import calc
+
+calc = None
+
+try:
+    from .clib import jCalc
+    calc = jCalc
+    print("Loading C library ...")
+except:
+    pass
 
 
 class Julia(Base):
@@ -66,24 +74,23 @@ class Julia(Base):
 
     def __calc(self, start, w, h):
         # 绘制以start为起点，宽w,高h的子区域
-        # x,y,w,h,N,c
         for i in range(w):
             for j in range(h):
-                # ct, r= calc([start[0] + i, start[1] + j, self.z0.real, self.z0.imag, self.C.real,
-                # self.C.imag, self.width, self.height, self.xmax, self.ymax,
-                # self.N, self.expc, self.R])
-                ct = 0
-                z = self.__getXY(start[0] + i, start[1] + j)
-                for k in range(self.N):
-                    ct = k
-                    if abs(z) > self.R:  # 大于逃逸半径，则返回
-                        break
-                    z = z**self.expc + self.C
-                self.screen.set_at(
-                    [start[0] + i, start[1] + j], self.color(ct, abs(z)))
-                # self.screen.set_at(
-                #     [start[0] + i, start[1] + j], self.color(ct, r))
-                # print(ct, end=" ")
+                if calc:  # 如果加载动态链接库没问题
+                    ct, r = jCalc([start[0] + i, start[1] + j, self.z0.real, self.z0.imag, self.C.real,
+                                self.C.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R])
+                    self.screen.set_at(
+                        [start[0] + i, start[1] + j], self.color(ct, r))
+                else:
+                    ct = 0
+                    z = self.__getXY(start[0] + i, start[1] + j)
+                    for k in range(self.N):
+                        ct = k
+                        if abs(z) > self.R:  # 大于逃逸半径，则返回
+                            break
+                        z = z**self.expc + self.C
+                    self.screen.set_at(
+                        [start[0] + i, start[1] + j], self.color(ct, abs(z)))
 
     def __run(self):
         # 线程中

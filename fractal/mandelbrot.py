@@ -3,6 +3,14 @@ from .colors import *
 from .base import Base
 from threading import Thread
 
+calc = None
+
+try:
+    from .clib import mCalc
+    calc = mCalc
+    print("Loading C library ...")
+except:
+    pass
 
 class Mandelbrot(Base):
 
@@ -47,7 +55,7 @@ class Mandelbrot(Base):
         # 设置指数，默认2
         self.expc = expc
 
-    def color(self, i, r=2):
+    def color(self, i, r = 2):
         # 对第i次迭代点着色，返回RGB值
         if i < len(reds) - 1:
             return reds[i]
@@ -63,16 +71,22 @@ class Mandelbrot(Base):
         # 绘制以start为起点，宽w,高h的子区域
         for i in range(w):
             for j in range(h):
-                ct = 0
-                z = self.Z0
-                c = self.__getXY(start[0] + i, start[1] + j)
-                for k in range(self.N):
-                    ct = k
-                    if abs(z) > self.R:  # 大于逃逸半径，则返回
-                        break
-                    z = z**self.expc + c
-                self.screen.set_at(
-                    [start[0] + i, start[1] + j], self.color(ct, abs(z)))
+                if calc:  # 如果加载动态链接库没问题
+                    ct, r = mCalc([start[0] + i, start[1] + j, self.Z0.real, self.Z0.imag, self.z0.real,
+                                self.z0.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R])
+                    self.screen.set_at(
+                        [start[0] + i, start[1] + j], self.color(ct, r))
+                else:
+                    ct = 0
+                    z = self.Z0
+                    c = self.__getXY(start[0] + i, start[1] + j)
+                    for k in range(self.N):
+                        ct = k
+                        if abs(z) > self.R:  # 大于逃逸半径，则返回
+                            break
+                        z = z**self.expc + c
+                    self.screen.set_at(
+                        [start[0] + i, start[1] + j], self.color(ct, abs(z)))
 
     def __run(self):
         # 绘图

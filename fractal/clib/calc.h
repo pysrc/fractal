@@ -1,3 +1,7 @@
+/**
+	Calculate Julia set and Mandelbrot set by C.
+	TDM-GCC 4.8.1 32 -bit Release
+**/
 #ifndef _DLL_H_
 #define _DLL_H_
 
@@ -7,6 +11,7 @@
 #define DLLIMPORT __declspec(dllimport)
 #endif
 
-int juliaCalc(double *args);
+int jCalc(double *args);
+int mCalc(double *args);
 
 #endif

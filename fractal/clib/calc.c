@@ -1,9 +1,9 @@
 /**
 	Calculate Julia set and Mandelbrot set by C.
+	TDM-GCC 4.8.1 32 -bit Release
 **/
 #include "calc.h"
 #include <windows.h>
-#include<stdio.h>
 #include<math.h>
 
 typedef struct Complex{
@@ -27,7 +27,7 @@ cpl mul(cpl x, cpl y){
 	return z;
 }
 
-int juliaCalc(double *args){
+int jCalc(double *args){
 	//i, j, zx,zy,cx, cy, width, height, xmax, ymax, N,  expc, R
 	//0, 1, 2, 3, 4,  5,  6,     7,      8,    9,    10, 11,   12
 	
@@ -40,7 +40,7 @@ int juliaCalc(double *args){
 	cpl c = { args[4], args[5] };
 	int k = 0;
 	int d = 1;
-	while(k < args[10]){
+	while(k++ < args[10]){
 		if(z.x*z.x+z.y*z.y > args[12]*args[12])
 			break;
 		d = 1;
@@ -48,11 +48,35 @@ int juliaCalc(double *args){
 		while(d++ < args[11])
 			tep = mul(tep, z);
 		z = add(tep, c);
-		k ++;
 	}
 	args[0] = sqrt(z.x*z.x+z.y*z.y);
 	return k;
 	
+}
+
+int mCalc(double *args){
+	//i, j, z0x,z0y,zx, zy, width, height, xmax, ymax, N,  expc, R
+	//0, 1, 2,   3, 4,  5,  6,     7,      8,    9,    10, 11,   12
+	
+	cpl z = { args[2], args[3] };
+	cpl c = {
+		(args[0] / args[6] - 0.5) * args[8] + args[4],
+		(args[1] / args[7] - 0.5) * args[9] + args[5]
+	};
+	cpl tep;
+	int k = 0;
+	int d = 1;
+	while(k++ < args[10]){
+		if(z.x*z.x+z.y*z.y > args[12]*args[12])
+			break;
+		d = 1;
+		tep = z;
+		while(d++ < args[11])
+			tep = mul(tep, z);
+		z = add(tep, c);
+	}
+	args[0] = sqrt(z.x*z.x+z.y*z.y);
+	return k;
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason,LPVOID lpvReserved)
