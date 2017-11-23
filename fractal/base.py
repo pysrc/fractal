@@ -59,7 +59,6 @@ class Base(object):
                             pygame.draw.rect(self.screen, [0, 0, 0], [
                                              i - w, j - h, 2 * w, 2 * h], 1)
                             pygame.display.flip()
-                            time.sleep(1)
                             self.scala(i, j, self.scalaRate)
                             th = threading.Thread(target=self.__run)
                             th.start()

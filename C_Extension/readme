@@ -1,0 +1,26 @@
+If you want to speed up the caculation of J set or M set, you can use this model.
+Because the condition of every computer is not same, please build this C extension in your computer.
+
+Building Environments:
+    Windows: Visual Studio 2017 and python3.x
+    Linux: gcc and python-dev
+    Mac: gcc and python-dev
+Command:
+    install:
+        python setup.py install
+    Or build:
+        python setup.py build
+
+
+你可以使用本模块加速J集或者M集的计算。因为每个电脑的情况不一样，因此你需要自己在电脑上编译本模块。（我已经编译了Windows下64位python3.6.3的版本的安装包，如果版本相同可以直接安装）
+
+编译环境：
+    Windows: Visual Studio 2017、 python3.x
+    Linux: gcc、python-dev
+    Mac: gcc、python-dev
+命令:
+    安装:
+        python setup.py install
+    或者编译:
+        python setup.py build
+

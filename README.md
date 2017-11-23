@@ -1,4 +1,4 @@
-# Python+pygame的分形绘图操作封装
+# Draw  Fractal Image Using Python
 
 ## install 
 
@@ -32,8 +32,9 @@ from fractal import Pen
 
 p = Pen([500, 500], title="Window")
 p.setPoint([495, 495])
+p.setAngle(90)
 p.doD0L(omega="f+f+f+f", P={"f": "ff+f--f+f"},
-        delta=90, times=5, length=490, rate=3, delta0 = 90)
+        delta=90, times=5, length=490, rate=3)
 p.wait()
 ```
 
@@ -41,13 +42,9 @@ p.wait()
 
 ```python
 from fractal import Pen
-
 p = Pen([420,420])
-
 p.setPoint([10,10])
-
 p.doD0L(omega = "L", P = {"L": "LFRFL-FF-RFLFR+FF+LFRFL", "R": "RFLFR+FF+LFRFL-FF-RFLFR"}, delta =  90, times = 4, length = 200 , rate = 3)
-
 p.wait()
 ```
 
@@ -55,15 +52,10 @@ p.wait()
 
 ```python
 from fractal import Pen
-
 p = Pen([400, 470])
-
 p.setAngle(90)
-
 p.setPoint([200,470])
-
 p.doD0L(omega = "f", P = {"f": "h[-f][+f]hf", "h": "hh"}, delta = 25.7, times = 7, length = 400, rate = 2.17)
-
 p.wait()
 ```
 
@@ -71,16 +63,11 @@ p.wait()
 
 ```python
 from fractal import Pen
-
 p = Pen([400, 470])
-
 p.setAngle(90)
-
 p.setPoint([170, 470])
-
 p.doD0L(omega="f", P={"f": "h+[[f]-f]-h[-hf]+f", "h": "hh"},
         delta=22.5, times=6, length=400, rate=2.3)
-
 p.wait()
 ```
 
@@ -91,7 +78,6 @@ p.wait()
 ```python
 from fractal import IFS
 from random import random
-
 
 def ifsp(x, y):
     p = random()
@@ -105,7 +91,7 @@ def ifsp(x, y):
     else:
         return (0.85 * x + 0.1 * y, -0.05 * x + 0.85 * y + 0.6)
 
-ob = IFS([400, 500], title = "蕨")
+ob = IFS([400, 500], title = "Leaf")
 ob.setPx(100, 100, 100)
 ob.setIfsp(ifsp)
 ob.doIFS(200000)

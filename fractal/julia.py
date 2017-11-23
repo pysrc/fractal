@@ -12,10 +12,8 @@ calc = None
 try:
     from .clib import jCalc
     calc = jCalc
-    print("Loading C library ...")
-except:
+except Exception as e:
     pass
-
 
 class Julia(Base):
 
@@ -41,7 +39,7 @@ class Julia(Base):
         # 设置指数，默认2
         self.expc = expc
 
-    def color(self, i, r = 2):
+    def color(self, i, r=2):
         # 对第i次迭代点着色，返回RGB值
         if i < len(reds) - 1:
             return reds[i]
@@ -76,9 +74,9 @@ class Julia(Base):
         # 绘制以start为起点，宽w,高h的子区域
         for i in range(w):
             for j in range(h):
-                if calc:  # 如果加载动态链接库没问题
-                    ct, r = jCalc([start[0] + i, start[1] + j, self.z0.real, self.z0.imag, self.C.real,
-                                self.C.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R])
+                if calc:  # 如果C库可加载
+                    ct, r = jCalc((start[0] + i, start[1] + j, self.z0.real, self.z0.imag, self.C.real,
+                                   self.C.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R))
                     self.screen.set_at(
                         [start[0] + i, start[1] + j], self.color(ct, r))
                 else:
@@ -94,14 +92,12 @@ class Julia(Base):
 
     def __run(self):
         # 线程中
-        print("x range ：[-%f,%f]\ny range ：[-%f,%f]" % (
+        print("x range ：[-%.2e,%.2e]\ny range ：[-%.2e,%.2e]" % (
             self.xmax, self.xmax, self.ymax, self.ymax))
         if self.C == None:
             raise Exception("请设置迭代常数")
             return
         tn = 5  # 25 个子线程绘图
-        # if calc:  # 如果可以调C库，则只需要一个线程
-        #     tn = 1
         ci = self.width // tn
         cj = self.height // tn
         ts = []

@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="fractal",
-    version="0.2.8",
-    keywords=["fractal","分形"],
+    version="0.2.9",
+    keywords=["fractal", "分形"],
     description="对分形比较感兴趣，看pypi上没有相关库，自己撸着玩",
     license="MIT",
     author="陈粮",
@@ -11,9 +11,9 @@ setup(
     packages=find_packages(),
     install_requires=["pygame>=1.9.3"],
     platforms="any",
-    url = "https://github.com/ChenL1994/fractal",
+    url="https://github.com/ChenL1994/fractal",
     zip_safe=False,
-    package_data = {
-        "": ["*.dll",]
+    package_data={
+        "": ["*.dll", "*.pyd", "*.so"]
     }
 )

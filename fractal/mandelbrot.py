@@ -8,7 +8,6 @@ calc = None
 try:
     from .clib import mCalc
     calc = mCalc
-    print("Loading C library ...")
 except:
     pass
 
@@ -55,7 +54,7 @@ class Mandelbrot(Base):
         # 设置指数，默认2
         self.expc = expc
 
-    def color(self, i, r = 2):
+    def color(self, i, r=2):
         # 对第i次迭代点着色，返回RGB值
         if i < len(reds) - 1:
             return reds[i]
@@ -72,8 +71,8 @@ class Mandelbrot(Base):
         for i in range(w):
             for j in range(h):
                 if calc:  # 如果加载动态链接库没问题
-                    ct, r = mCalc([start[0] + i, start[1] + j, self.Z0.real, self.Z0.imag, self.z0.real,
-                                self.z0.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R])
+                    ct, r = mCalc((start[0] + i, start[1] + j, self.Z0.real, self.Z0.imag, self.z0.real,
+                                   self.z0.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R))
                     self.screen.set_at(
                         [start[0] + i, start[1] + j], self.color(ct, r))
                 else:
@@ -90,7 +89,7 @@ class Mandelbrot(Base):
 
     def __run(self):
         # 绘图
-        print("x range ：[-%f,%f]\ny range ：[-%f,%f]" % (
+        print("x range ：[-%.2e,%.2e]\ny range ：[-%.2e,%.2e]" % (
             self.xmax, self.xmax, self.ymax, self.ymax))
         tn = 5  # 25 个子线程绘图
         # if calc: # 如果可以调C库，则只需要一个线程
