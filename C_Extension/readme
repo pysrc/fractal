@@ -1,4 +1,4 @@
-If you want to speed up the caculation of J set or M set, you can use this model.
+If you want to speed up the calculation of J set or M set, you can use this model.
 Because the condition of every computer is not same, please build this C extension in your computer.
 
 Building Environments:

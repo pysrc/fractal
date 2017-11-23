@@ -8,6 +8,8 @@ Or download the package
 
 `python setup.py install`
 
+If you want to speed up the calculation of Julia Set or Mandelbort Set, you can use the fractension module in C_Extension dir. But you must build the fractension module by yourself , the more details in [here](C_Extension/readme).
+
 ## Examples
 
 ### L-System
