@@ -1,4 +1,4 @@
-# Draw  Fractal Image Using Python
+# Draw  Fractal Image By Python
 
 ## install 
 
