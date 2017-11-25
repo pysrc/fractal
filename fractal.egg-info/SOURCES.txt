@@ -1,6 +1,7 @@
 setup.py
 fractal/__init__.py
 fractal/base.py
+fractal/cifs.py
 fractal/colors.py
 fractal/ifs.py
 fractal/julia.py
