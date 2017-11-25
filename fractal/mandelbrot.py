@@ -54,14 +54,15 @@ class Mandelbrot(Base):
         # 设置指数，默认2
         self.expc = expc
 
-    def color(self, i, r=2):
-        # 对第i次迭代点着色，返回RGB值
-        if i < len(reds) - 1:
-            return reds[i]
-        elif r < self.R:
-            j = (len(blues) - 1) * r / self.R
-            return blues[-int(j)]
-        return (0, 0, 0)
+    def color(self, n, r=2):
+        if n < len(reds):
+            return reds[n]
+        else:
+            if r < self.R:
+                return blues[int((len(blues) - 1) * r / self.R)]
+            else:
+                return purples[int((len(purples) - 1) * self.R / r)]
+
 
     def setColor(self, call):
         self.color = call
