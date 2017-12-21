@@ -104,14 +104,16 @@ static PyObject *fractension_jCalc(PyObject *self, PyObject *args) { // Python�
     if (!PyArg_ParseTuple(args, "(ddddddddddddd)", &c_args[0], &c_args[1], &c_args[2], &c_args[3], &c_args[4], &c_args[5], &c_args[6], &c_args[7], &c_args[8], &c_args[9], &c_args[10], &c_args[11], &c_args[12]))
         return NULL;
     // 返回一个tuple （迭代次数，逃逸半径），注意参数类型，int, double
-    return Py_BuildValue("(i,d)", jCalc(c_args), c_args[0]);
+    int res = jCalc(c_args);
+    return Py_BuildValue("(i,d)", res, c_args[0]);
 }
 
 static PyObject *fractension_mCalc(PyObject *self, PyObject *args) {
     double c_args[13];
     if (!PyArg_ParseTuple(args, "(ddddddddddddd)", &c_args[0], &c_args[1], &c_args[2], &c_args[3], &c_args[4], &c_args[5], &c_args[6], &c_args[7], &c_args[8], &c_args[9], &c_args[10], &c_args[11], &c_args[12]))
         return NULL;
-    return Py_BuildValue("(i,d)", mCalc(c_args), c_args[0]);
+    int res = mCalc(c_args);
+    return Py_BuildValue("(i,d)", res, c_args[0]);
 }
 
 static PyMethodDef FractensionMethods[] = {
