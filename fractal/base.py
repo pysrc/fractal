@@ -2,8 +2,9 @@
     基类
     功能说明：
     - 保存图片：点击"保存"按钮 或 Ctrl+P
-    - 放大：点击放大部分鼠标左键
-    - 缩小：点击缩小部分鼠标右键
+    - 放大：左键点击显示选择框，拖动调整位置，再次点击确认放大
+    - 缩小：右键点击缩小
+    - 取消选择：右键点击或按ESC键
 """
 
 import tkinter as tk
@@ -96,14 +97,23 @@ class Base(object):
         self._running = True
         self._drawing = False
         self._draw_thread = None
+
+        # 选择框相关
         self._selection_rect = None  # 选择框ID
+        self._selecting = False  # 是否在选择模式
+        self._selection_center = None  # 选择框中心坐标
+        self._drag_start = None  # 拖动起始坐标
 
         # 绑定事件
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         self.root.bind("<Control-p>", self._on_save)
         self.root.bind("<Control-s>", self._on_save_click)
-        self.canvas.bind("<Button-1>", self._on_left_click)  # 左键放大
-        self.canvas.bind("<Button-3>", self._on_right_click)  # 右键缩小
+        self.root.bind("<Escape>", self._cancel_selection)  # ESC取消选择
+        self.canvas.bind("<Button-1>", self._on_left_click)  # 左键
+        self.canvas.bind("<Button-3>", self._on_right_click)  # 右键
+        self.canvas.bind("<B1-Motion>", self._on_drag)  # 拖动
+        self.canvas.bind("<ButtonRelease-1>", self._on_drag_end)  # 拖动结束
+        self.canvas.bind("<Double-Button-1>", self._on_double_click)  # 双击确认
 
     def _on_close(self):
         self._running = False
@@ -117,6 +127,21 @@ class Base(object):
     def _on_save(self, event=None):
         """快捷键保存"""
         self._on_save_click()
+
+    def _cancel_selection(self, event=None):
+        """取消选择框"""
+        if self._selection_rect is not None:
+            self.canvas.delete(self._selection_rect)
+            self._selection_rect = None
+            self._selecting = False
+            self._selection_center = None
+            self._update_status("已取消选择", "gray")
+
+    def _get_selection_rect_coords(self, center_x, center_y):
+        """获取选择框的坐标"""
+        w = self.width // (2 * self.scalaRate)
+        h = self.height // (2 * self.scalaRate)
+        return (center_x - w, center_y - h, center_x + w, center_y + h)
 
     def _sync_pil_image(self):
         """同步PIL图像从numpy数组"""
@@ -183,29 +208,73 @@ class Base(object):
                 messagebox.showinfo("保存成功", f"图片已保存为 {filename}")
 
     def _on_left_click(self, event):
-        """左键点击放大"""
+        """左键点击处理"""
         if self._drawing or not hasattr(self, "scala"):
             return
+
+        # 如果正在选择模式，确认放大
+        if self._selecting and self._selection_rect is not None:
+            self._confirm_zoom(event.x, event.y)
+            return
+
+        # 第一次点击，显示选择框
         i, j = event.x, event.y
-        w = self.width // (2 * self.scalaRate)
-        h = self.height // (2 * self.scalaRate)
-        # 绘制选择框并保存ID
-        self._selection_rect = self.canvas.create_rectangle(i - w, j - h, i + w, j + h, outline="black", width=1)
-        self.root.update()
-        # 清空像素数组重新绘制
+        coords = self._get_selection_rect_coords(i, j)
+        self._selection_rect = self.canvas.create_rectangle(
+            coords[0], coords[1], coords[2], coords[3],
+            outline="red", width=2, dash=(4, 4)
+        )
+        self._selecting = True
+        self._selection_center = (i, j)
+        self._update_status("拖动调整位置，点击确认，ESC取消", "blue")
+
+    def _on_double_click(self, event):
+        """双击确认放大"""
+        if self._selecting and self._selection_rect is not None and not self._drawing:
+            self._confirm_zoom(self._selection_center[0], self._selection_center[1])
+
+    def _on_drag(self, event):
+        """拖动选择框"""
+        if not self._selecting or self._selection_rect is None:
+            return
+        # 更新选择框位置
+        coords = self._get_selection_rect_coords(event.x, event.y)
+        self.canvas.coords(self._selection_rect, coords[0], coords[1], coords[2], coords[3])
+        self._selection_center = (event.x, event.y)
+
+    def _on_drag_end(self, event):
+        """拖动结束"""
+        if self._selecting:
+            self._selection_center = (event.x, event.y)
+
+    def _confirm_zoom(self, x, y):
+        """确认放大"""
+        # 删除选择框
+        if self._selection_rect is not None:
+            self.canvas.delete(self._selection_rect)
+            self._selection_rect = None
+        self._selecting = False
+
+        # 执行放大
         self._clear_pixels()
-        self.scala(i, j, self.scalaRate)
+        self.scala(x, y, self.scalaRate)
         self._start_draw()
 
     def _on_right_click(self, event):
-        """右键点击缩小"""
-        if self._drawing or not hasattr(self, "scala"):
+        """右键点击处理"""
+        if self._drawing:
             return
-        i, j = event.x, event.y
-        # 清空像素数组重新绘制
-        self._clear_pixels()
-        self.scala(i, j, 1 / self.scalaRate)
-        self._start_draw()
+
+        # 如果在选择模式，取消选择
+        if self._selecting:
+            self._cancel_selection()
+            return
+
+        # 否则执行缩小
+        if hasattr(self, "scala"):
+            self._clear_pixels()
+            self.scala(event.x, event.y, 1 / self.scalaRate)
+            self._start_draw()
 
     def _clear_pixels(self):
         """清空像素数据"""
@@ -239,12 +308,8 @@ class Base(object):
 
     def _finish_draw(self):
         """绘图完成后的处理"""
-        # 删除选择框
-        if self._selection_rect is not None:
-            self.canvas.delete(self._selection_rect)
-            self._selection_rect = None
         self._update_display()
-        self._update_status("绘图完成", "green")
+        self._update_status("绘图完成 - 左键选择放大区域", "green")
 
     def _update_display(self):
         """更新显示（在主线程中调用）"""
