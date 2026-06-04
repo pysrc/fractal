@@ -1,20 +1,42 @@
-# Draw  Fractal Image By Python
+# Draw Fractal Image By Python
 
-## install 
+A Python fractal drawing library supporting Julia Set, Mandelbrot Set, IFS, L-System and more.
 
-`pip install fractal`
+## Install
 
-Or download the package
+```bash
+pip install fractal
+```
 
-`python setup.py install`
+Or download the package:
 
-If you want to speed up the calculation of Julia Set or Mandelbort Set, you can use the fractension module in C_Extension dir. But you must build the fractension module by yourself , the more details in [here](C_Extension/readme).
+```bash
+pip install -e .
+```
+
+Dependencies:
+- Pillow >= 8.0.0
+- numpy >= 1.20.0
+
+## Features
+
+- **Julia Set** - Interactive zoom with mouse
+- **Mandelbrot Set** - Classic Mandelbrot fractal
+- **IFS** - Iterated Function System (fern, leaf, tree, etc.)
+- **L-System** - Lindenmayer System (Koch curve, dragon, tree, etc.)
+- **CIFS** - Complex Iterated Function System
+
+## GUI Operations
+
+- **Save**: Click "Save" button or Ctrl+P
+- **Save As**: Click "Save As..." to choose format (PNG/JPG/BMP)
+- **Zoom In**: Left click to show selection box, drag to move, click again to confirm
+- **Zoom Out**: Right click
+- **Cancel Selection**: Press ESC or right click
 
 ## Examples
 
 ### L-System
-
-
 
 ```python
 from fractal import Pen
@@ -141,7 +163,6 @@ ifscode = [
 ]
 
 ifs = IFS([500, 500])
-# ifs.setCoordinate()
 ifs.setPx(700, 0, 0)
 ifs.setIfsCode(ifscode)
 ifs.doIFS(200000)
@@ -221,5 +242,10 @@ man.wait()
 
 ![](fenxing_images/mandelbrot4.jpg)
 
+## License
 
+MIT License
 
+## Author
+
+L.Chen (pysrc)
