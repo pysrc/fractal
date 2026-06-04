@@ -1,3 +1,5 @@
+LICENSE
+README.md
 setup.py
 fractal/__init__.py
 fractal/base.py
@@ -13,6 +15,3 @@ fractal.egg-info/dependency_links.txt
 fractal.egg-info/not-zip-safe
 fractal.egg-info/requires.txt
 fractal.egg-info/top_level.txt
-fractal/clib/__init__.py
-fractal/clib/calc.dll
-fractal/clib/calc64.dll

@@ -11,7 +11,6 @@
 """
 
 from math import sin, cos, pi
-import pygame
 from .base import Base
 
 
@@ -28,7 +27,7 @@ class Pen(Base):
     def __init__(self, size, title=""):
         # size 画布的宽高 [width, hight]
         # title 画布标题
-        Base.__init__(self, size, self.__run, title)
+        Base.__init__(self, size, self._run, title)
         self.setPoint([size[0] / 2, size[1] / 2])
         self.setColor([0, 0, 0])
         self.setWidth(1)
@@ -59,11 +58,11 @@ class Pen(Base):
 
     def forward(self, d):
         # 向前走d步长
-        np = left(self.screen, self.pos, self.angle, d)
-        pygame.draw.line(self.screen, self.color, self.pos, np, self.width)
+        np = left(self.canvas, self.pos, self.angle, d)
+        self.draw_line(self.pos, np, self.color, self.width)
         self.pos = np
 
-    def __run(self):
+    def _run(self):
         # 线程
         self.draw(self.omega, self.P, self.delta, self.length)
 

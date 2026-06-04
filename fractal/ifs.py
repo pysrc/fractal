@@ -1,10 +1,9 @@
 """
     迭代函数系统（IFS）
 """
-import pygame
 from random import random
 from math import sin, cos
-from .base import Base
+from .base import Base, HAS_NUMPY
 
 
 def getIfsCode(matrix):
@@ -20,7 +19,7 @@ def getIfsCode(matrix):
 class IFS(Base):
 
     def __init__(self, size, title="", color=None):
-        Base.__init__(self, size, self.__run, title)
+        Base.__init__(self, size, self._run, title)
         self.setPx()
         self.setIfsCode()
         self.__coo = True
@@ -28,7 +27,7 @@ class IFS(Base):
             self.color = color
         else:
             self.color = [255, 255, 255]
-        self.screen.fill(self.color)
+        self.fill(self.color)
 
     def setCoordinate(self):
         # 纵轴的反向
@@ -36,7 +35,6 @@ class IFS(Base):
 
     def ifsp(self, x, y):
         # 变换规则(返回迭代后的坐标)
-        # 此函数具体用时需要重写
         return (x, y)
 
     def setIfsp(self, call):
@@ -46,18 +44,16 @@ class IFS(Base):
         # 设置ifs码
         self.ifsCode = ifsCode
         if ifsCode != None:
-            # 解析ifs码
-            p = [i[-1] for i in self.ifsCode]  # 每个方程的概率
-            self.__fn = len(p)  # 方程个数
+            p = [i[-1] for i in self.ifsCode]
+            self.__fn = len(p)
             sp = sum(p)
-            # 将概率映射到0-1区间
             self.__pe = [sum(p[:i + 1])/sp for i in range(self.__fn)]
 
     def __parseIfsCode(self, x, y):
         rand = random()
         i = 0
         while i < self.__fn:
-            if rand <= self.__pe[i]:  # 选择概率pe[i]对应的方程
+            if rand <= self.__pe[i]:
                 a, b, c, d, e, f, p = self.ifsCode[i]
                 return (a * x + b * y + e, c * x + d * y + f)
             i += 1
@@ -65,22 +61,22 @@ class IFS(Base):
 
     def setPx(self, enlarge=1, pl=0, pt=0):
         # 平移、放大调整
-        # enlarge: 放大倍数
-        # pl: 向右平移像素
-        # pt: 向下平移像素
         self.enlarge = enlarge
         self.pl = pl
         self.pt = pt
 
-    def __run(self):
+    def _run(self):
         start = self.start
         for i in range(self.n):
-            if self.__coo:
-                self.screen.set_at(
-                    (int(self.enlarge * start[0] + self.pl), int(self.enlarge * start[1] + self.pt)), self.pcolor)
+            px = int(self.enlarge * start[0] + self.pl)
+            py = int(self.enlarge * start[1] + self.pt)
+            if not self.__coo:
+                py = self.height - py
+            if HAS_NUMPY and self._pixel_array is not None:
+                if 0 <= px < self.width and 0 <= py < self.height:
+                    self._pixel_array[py, px] = [int(self.pcolor[0]), int(self.pcolor[1]), int(self.pcolor[2])]
             else:
-                self.screen.set_at((int(self.enlarge * start[0] + self.pl), self.screen.get_height(
-                ) - int(self.enlarge * start[1] + self.pt)), self.pcolor)
+                self.set_pixel_fast(px, py, self.pcolor[0], self.pcolor[1], self.pcolor[2])
             start = self.ifsp(*start)
 
     def doIFS(self, n, start=None, color=None):

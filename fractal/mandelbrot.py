@@ -1,20 +1,16 @@
-import pygame
+"""
+Mandelbrot集
+"""
+
+from .base import Base, HAS_NUMPY
 from .colors import *
-from .base import Base
 from threading import Thread
 
-calc = None
-
-try:
-    from .clib import mCalc
-    calc = mCalc
-except:
-    pass
 
 class Mandelbrot(Base):
 
     def __init__(self, size, title=""):
-        Base.__init__(self, size, self.__run, title)
+        Base.__init__(self, size, self._run, title)
         self.setExp(2)
         self.setRadius(2)
         self.setZ0(0 + 0j)
@@ -42,7 +38,8 @@ class Mandelbrot(Base):
 
     def __getXY(self, i, j):
         # 通过像素坐标获取映射后的坐标
-        return complex((i / self.width - 0.5) * self.xmax + self.z0.real, (j / self.height - 0.5) * self.ymax + self.z0.imag)
+        return complex((i / self.width - 0.5) * self.xmax + self.z0.real,
+                       (j / self.height - 0.5) * self.ymax + self.z0.imag)
 
     def scala(self, i, j, rate):
         # 将(i, j)像素点置于中心位置，放大rete倍
@@ -63,45 +60,39 @@ class Mandelbrot(Base):
             else:
                 return purples[int((len(purples) - 1) * self.R / r)]
 
-
     def setColor(self, call):
         self.color = call
 
     def __calc(self, start, w, h):
-        # 绘制以start为起点，宽w,高h的子区域
-        for i in range(w):
-            for j in range(h):
-                if calc:  # 如果加载动态链接库没问题
-                    ct, r = mCalc((start[0] + i, start[1] + j, self.Z0.real, self.Z0.imag, self.z0.real,
-                                   self.z0.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R))
-                    self.screen.set_at(
-                        [start[0] + i, start[1] + j], self.color(ct, r))
+        """计算子区域像素"""
+        for i in range(start[0], start[0] + w):
+            for j in range(start[1], start[1] + h):
+                ct = 0
+                z = self.Z0
+                c = self.__getXY(i, j)
+                for k in range(self.N):
+                    ct = k
+                    if abs(z) > self.R:
+                        break
+                    z = z**self.expc + c
+                col = self.color(ct, abs(z))
+                # 直接写入numpy数组
+                if HAS_NUMPY and self._pixel_array is not None:
+                    self._pixel_array[j, i] = [int(col[0]), int(col[1]), int(col[2])]
                 else:
-                    ct = 0
-                    z = self.Z0
-                    c = self.__getXY(start[0] + i, start[1] + j)
-                    for k in range(self.N):
-                        ct = k
-                        if abs(z) > self.R:  # 大于逃逸半径，则返回
-                            break
-                        z = z**self.expc + c
-                    self.screen.set_at(
-                        [start[0] + i, start[1] + j], self.color(ct, abs(z)))
+                    self.set_pixel_fast(i, j, col[0], col[1], col[2])
 
-    def __run(self):
+    def _run(self):
         # 绘图
         print("x range ：[-%.2e,%.2e]\ny range ：[-%.2e,%.2e]" % (
             self.xmax, self.xmax, self.ymax, self.ymax))
         tn = 5  # 25 个子线程绘图
-        # if calc: # 如果可以调C库，则只需要一个线程
-        #     tn = 1
         ci = self.width // tn
         cj = self.height // tn
         ts = []
         for i in range(tn):
             for j in range(tn):
-                t = Thread(target=self.__calc, args=(
-                    [i * ci, j * cj], self.width // tn, self.height // tn))
+                t = Thread(target=self.__calc, args=([i * ci, j * cj], ci, cj))
                 t.start()
                 ts.append(t)
         for t in ts:

@@ -2,24 +2,15 @@
 Julia集
 """
 
-import pygame
-from .base import Base
+from .base import Base, HAS_NUMPY
 from .colors import *
 from threading import Thread
-
-calc = None
-
-try:
-    from .clib import jCalc
-    calc = jCalc
-except Exception as e:
-    pass
 
 
 class Julia(Base):
 
     def __init__(self, size, title=""):
-        Base.__init__(self, size, self.__run, title)
+        Base.__init__(self, size, self._run, title)
         self.setExp(2)
         self.setC(None)
         self.setRadius(2)
@@ -63,7 +54,8 @@ class Julia(Base):
 
     def __getXY(self, i, j):
         # 通过像素坐标获取映射后的坐标
-        return complex((i / self.width - 0.5) * self.xmax + self.z0.real, (j / self.height - 0.5) * self.ymax + self.z0.imag)
+        return complex((i / self.width - 0.5) * self.xmax + self.z0.real,
+                       (j / self.height - 0.5) * self.ymax + self.z0.imag)
 
     def scala(self, i, j, rate):
         # 将(i, j)像素点置于中心位置，放大rete倍
@@ -72,40 +64,36 @@ class Julia(Base):
         self.ymax /= rate
 
     def __calc(self, start, w, h):
-        # 绘制以start为起点，宽w,高h的子区域
-        for i in range(w):
-            for j in range(h):
-                if calc:  # 如果C库可加载
-                    ct, r = jCalc((start[0] + i, start[1] + j, self.z0.real, self.z0.imag, self.C.real,
-                                   self.C.imag, self.width, self.height, self.xmax, self.ymax, self.N, self.expc, self.R))
-                    self.screen.set_at(
-                        [start[0] + i, start[1] + j], self.color(ct, r))
+        """计算子区域像素"""
+        for i in range(start[0], start[0] + w):
+            for j in range(start[1], start[1] + h):
+                ct = 0
+                z = self.__getXY(i, j)
+                for k in range(self.N):
+                    ct = k
+                    if abs(z) > self.R:
+                        break
+                    z = z**self.expc + self.C
+                col = self.color(ct, abs(z))
+                # 直接写入numpy数组
+                if HAS_NUMPY and self._pixel_array is not None:
+                    self._pixel_array[j, i] = [int(col[0]), int(col[1]), int(col[2])]
                 else:
-                    ct = 0
-                    z = self.__getXY(start[0] + i, start[1] + j)
-                    for k in range(self.N):
-                        ct = k
-                        if abs(z) > self.R:  # 大于逃逸半径，则返回
-                            break
-                        z = z**self.expc + self.C
-                    self.screen.set_at(
-                        [start[0] + i, start[1] + j], self.color(ct, abs(z)))
+                    self.set_pixel_fast(i, j, col[0], col[1], col[2])
 
-    def __run(self):
+    def _run(self):
         # 线程中
         print("x range ：[-%.2e,%.2e]\ny range ：[-%.2e,%.2e]" % (
             self.xmax, self.xmax, self.ymax, self.ymax))
         if self.C == None:
             raise Exception("请设置迭代常数")
-            return
         tn = 5  # 25 个子线程绘图
         ci = self.width // tn
         cj = self.height // tn
         ts = []
         for i in range(tn):
             for j in range(tn):
-                t = Thread(target=self.__calc, args=(
-                    [i * ci, j * cj], self.width // tn, self.height // tn))
+                t = Thread(target=self.__calc, args=([i * ci, j * cj], ci, cj))
                 t.start()
                 ts.append(t)
         for t in ts:

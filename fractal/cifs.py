@@ -3,15 +3,15 @@
     复迭代函数系统
 """
 
-import pygame
-from .base import Base
+from .base import Base, HAS_NUMPY
 from .colors import *
 from threading import Thread
+
 
 class CIFS(Base):
 
     def __init__(self, size, title=""):
-        Base.__init__(self, size, self.__run, title)
+        Base.__init__(self, size, self._run, title)
         self.setRadius(10)
         self.width = size[0]
         self.height = size[1]
@@ -50,7 +50,8 @@ class CIFS(Base):
 
     def __getXY(self, i, j):
         # 通过像素坐标获取映射后的坐标
-        return complex((i / self.width - 0.5) * self.xmax + self.z0.real, (j / self.height - 0.5) * self.ymax + self.z0.imag)
+        return complex((i / self.width - 0.5) * self.xmax + self.z0.real,
+                       (j / self.height - 0.5) * self.ymax + self.z0.imag)
 
     def scala(self, i, j, rate):
         # 将(i, j)像素点置于中心位置，放大rete倍
@@ -60,29 +61,33 @@ class CIFS(Base):
 
     def __calc(self, start, w, h):
         # 绘制以start为起点，宽w,高h的子区域
-        for i in range(w):
-            for j in range(h):
+        for i in range(start[0], start[0] + w):
+            for j in range(start[1], start[1] + h):
                 ct = 0
-                z = self.__getXY(start[0] + i, start[1] + j)
+                z = self.__getXY(i, j)
                 for k in range(self.N):
                     ct = k
-                    if abs(z) > self.R:  # 大于逃逸半径，则返回
+                    if abs(z) > self.R:
                         break
                     z = self.ifunc(z)
-                self.screen.set_at(
-                    [start[0] + i, start[1] + j], self.color(ct, abs(z)))
+                col = self.color(ct, abs(z))
+                if HAS_NUMPY and self._pixel_array is not None:
+                    self._pixel_array[j, i] = [int(col[0]), int(col[1]), int(col[2])]
+                else:
+                    self.set_pixel_fast(i, j, col[0], col[1], col[2])
 
-    def __run(self):
+    def _run(self):
         print("x range ：[-%.2e,%.2e]\ny range ：[-%.2e,%.2e]" % (
             self.xmax, self.xmax, self.ymax, self.ymax))
-        tn = 5  # 25 个子线程绘图
+        if self.ifunc is None:
+            raise Exception("请设置迭代函数")
+        tn = 5
         ci = self.width // tn
         cj = self.height // tn
         ts = []
         for i in range(tn):
             for j in range(tn):
-                t = Thread(target=self.__calc, args=(
-                    [i * ci, j * cj], self.width // tn, self.height // tn))
+                t = Thread(target=self.__calc, args=([i * ci, j * cj], ci, cj))
                 t.start()
                 ts.append(t)
         for t in ts:
